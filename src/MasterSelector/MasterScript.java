@@ -1,191 +1,3 @@
-//package MasterSelector;
-//
-//import org.dreambot.api.script.AbstractScript;
-//import org.dreambot.api.script.Category;
-//import org.dreambot.api.script.ScriptManifest;
-//import ZammyWineStealer.ZammyWineStealer;
-//import MortMyrePicker.MortMyrePicker;
-//import BuyAndCrushChocolate.BuyAndCrushChocolate;
-//import RedSalamanders.RedSalamanders;
-//import BlackSalamanders.BlackSalamanders;
-//
-//import javax.swing.*;
-//import java.awt.*;
-//import java.util.HashMap;
-//
-//@ScriptManifest(name = "Zeb's Ironman AIO Script", description = "Choose your script.", author = "Zeb",
-//        version = 1.0, category = Category.UTILITY, image = "")
-//public class MasterScript extends AbstractScript {
-//
-//    private AbstractScript chosenScript;
-//    private JFrame frame;
-//    private CardLayout cardLayout;
-//    private JPanel mainPanel;
-//    private HashMap<String, String> scriptInstructions = new HashMap<>();
-//
-//
-//    @Override
-//    public void onStart() {
-//        SwingUtilities.invokeLater(this::displayGUI);
-//    }
-//
-//    private void displayGUI() {
-//        frame = new JFrame("Choose Script");
-//        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-//        frame.setSize(500, 200);
-//
-//        cardLayout = new CardLayout();
-//        mainPanel = new JPanel(cardLayout);
-//
-//        JPanel selectionPanel = createSelectionPanel();
-//        JPanel confirmationPanel = createConfirmationPanel("");  // Initially empty
-//
-//        mainPanel.add(selectionPanel, "SELECTION");
-//        mainPanel.add(confirmationPanel, "CONFIRMATION");
-//
-//        frame.add(mainPanel);
-//        cardLayout.show(mainPanel, "SELECTION");
-//
-//        frame.setVisible(true);
-//
-//        //Script Instructions
-//        scriptInstructions.put("Zammy Wine Stealer", "Instructions for Zammy Wine Stealer...");
-//        scriptInstructions.put("Mort Myre Picker", "Instructions for Mort Myre Picker...");
-//        scriptInstructions.put("Buy And Crush Chocolate", "Instructions for Buy And Crush Chocolate...");
-//        scriptInstructions.put("Red Salamanders", "Instructions for Red Salamanders...");
-//        scriptInstructions.put("Black Salamanders", "Instructions for Black Salamanders...");
-//    }
-//
-//    private JPanel createSelectionPanel() {
-//        JPanel panel = new JPanel(new BorderLayout());
-//
-//        JPanel header = new JPanel();
-//        header.setBackground(Color.decode("#343437"));
-//        header.setPreferredSize(new Dimension(frame.getWidth(), 30));
-//        JLabel titleLabel = new JLabel("Choose your script");
-//        JLabel descriptionLabel = new JLabel("Please click on the desired script button");
-//        header.add(titleLabel);
-//        header.add(descriptionLabel);
-//
-//        JPanel buttonPanel = new JPanel(new GridLayout(2, 3, 10, 10));
-//        JButton zammyButton = createButton("Zammy Wine Stealer");
-//        JButton mortMyreButton = createButton("Mort Myre Picker");
-//        JButton buyAndCrushChocolate = createButton("Buy And Crush Chocolate");
-//        JButton redSalamanders = createButton("Red Salamanders");
-//        JButton blackSalamanders = createButton("Black Salamanders");
-//
-//        buttonPanel.add(zammyButton);
-//        buttonPanel.add(mortMyreButton);
-//        buttonPanel.add(buyAndCrushChocolate);
-//        buttonPanel.add(redSalamanders);
-//        buttonPanel.add(blackSalamanders);
-//
-//        panel.add(header, BorderLayout.NORTH);
-//        panel.add(buttonPanel, BorderLayout.CENTER);
-//
-//        return panel;
-//    }
-//
-//    private JPanel createConfirmationPanel(String scriptName) {
-//        JPanel panel = new JPanel(new BorderLayout());
-//
-//        JTextArea instructionsArea = new JTextArea("Make sure you have the required items for " + scriptName + ". Once this is done, click start.");
-//        instructionsArea.setPreferredSize(new Dimension(frame.getWidth(), 35));
-//        instructionsArea.setBackground(Color.decode("#2f2f2f"));
-//
-//        JButton startButton = new JButton("Start");
-//        startButton.setBackground(Color.decode("#343437"));
-//        startButton.setPreferredSize(new Dimension(63, 28));
-//
-//        JButton backButton = new JButton("Back");
-//        backButton.setBackground(Color.decode("#343437"));
-//        backButton.setPreferredSize(new Dimension(63, 28));
-//        backButton.addActionListener(e -> cardLayout.show(mainPanel, "SELECTION"));
-//
-//        JPanel southPanel = new JPanel();
-//        southPanel.add(backButton);
-//        southPanel.add(startButton);
-//
-//        panel.add(instructionsArea, BorderLayout.CENTER);
-//        panel.add(southPanel, BorderLayout.SOUTH);
-//
-//        return panel;
-//    }
-//
-//    private JButton createButton(String text) {
-//        JButton button = new JButton(text);
-//        button.setBackground(Color.decode("#343437"));
-//        button.setForeground(Color.WHITE);
-//        button.addActionListener(e -> showConfirmationDialog(text));
-//        return button;
-//    }
-//
-//    private void showConfirmationDialog(String scriptName) {
-//        JPanel confirmationPanel = createConfirmationPanel(scriptName);
-//
-//        JTextArea instructionsArea = (JTextArea)confirmationPanel.getComponent(0); // Assuming the JTextArea is the first component of the panel
-//        instructionsArea.setText(scriptInstructions.getOrDefault(scriptName, "Make sure you have the required items for " + scriptName + ". Once this is done, click start."));
-//
-//
-//        JButton startButton = new JButton("Start");
-//        startButton.setBackground(Color.decode("#343437"));
-//        startButton.setPreferredSize(new Dimension(63, 28));
-//        startButton.addActionListener(e -> {
-//            switch (scriptName) {
-//                case "Zammy Wine Stealer":
-//                    chosenScript = new ZammyWineStealer();
-//                    break;
-//                case "Mort Myre Picker":
-//                    chosenScript = new MortMyrePicker();
-//                    break;
-//                case "Buy And Crush Chocolate":
-//                    chosenScript = new BuyAndCrushChocolate();
-//                    break;
-//                case "Red Salamanders":
-//                    chosenScript = new RedSalamanders();
-//                    break;
-//                case "Black Salamanders":
-//                    chosenScript = new BlackSalamanders();
-//                    break;
-//                default:
-//                    JOptionPane.showMessageDialog(frame, "Script not recognized.");
-//                    return;
-//            }
-//            frame.dispose(); // Close the script selection window
-//        });
-//
-//        JButton backButton = new JButton("Back");
-//        backButton.setBackground(Color.decode("#343437"));
-//        backButton.setPreferredSize(new Dimension(63, 28));
-//        backButton.addActionListener(e -> {
-//            cardLayout.show(mainPanel, "SELECTION"); // Go back to the script selection
-//            frame.revalidate();
-//            frame.repaint();
-//        });
-//
-//        JPanel buttonPanel = new JPanel();
-//        buttonPanel.add(backButton);
-//        buttonPanel.add(startButton);
-//        confirmationPanel.add(buttonPanel, BorderLayout.SOUTH);
-//
-//        mainPanel.add(confirmationPanel, "CONFIRMATION");
-//        cardLayout.show(mainPanel, "CONFIRMATION"); // Switch to the confirmation panel
-//
-//        frame.revalidate();
-//        frame.repaint();
-//    }
-//
-//    @Override
-//    public int onLoop() {
-//        if (chosenScript != null) {
-//            return chosenScript.onLoop();
-//        }
-//        return 1000;
-//    }
-//}
-
-
-
 package MasterSelector;
 
 import org.dreambot.api.script.AbstractScript;
@@ -210,12 +22,62 @@ public class MasterScript extends AbstractScript {
     private CardLayout cardLayout;
     private JPanel mainPanel;
 
-    private HashMap<String, String> scriptInstructions = new HashMap<String, String>() {{
-        put("Zammy Wine Stealer", "Instructions for Zammy Wine Stealer...");
-        put("Mort Myre Picker", "Instructions for Mort Myre Picker...");
-        put("Buy And Crush Chocolate", "Instructions for Buy And Crush Chocolate...");
-        put("Red Salamanders", "Instructions for Red Salamanders...");
-        put("Black Salamanders", "Instructions for Black Salamanders...");
+    private final HashMap<String, String> scriptInstructions = new HashMap<>() {{
+        put("Zammy Wine Stealer",
+                """
+                        Zammy Wine Stealer Instructions:
+                        - Start your character in mage bank.
+                        - You will need sufficient Air and Law runes, and a knife or wildy sword to slash the webs. Stock up on a few extra in case you die
+                        - The bot will try hop worlds any time a player is nearby while it is in the wildy, but it can still get caught by pkers.
+                        
+                        Coming soon:
+                        - Start from any bank coming soon...
+                        - Auto reset from Lumbridge if you die (glory to edgeville, edgeville lever)...
+                        """
+        );
+
+
+        put("Mort Myre Picker",
+                """
+                        Instructions for Mort Myre Picker:
+                        Start from anywhere, but make sure to have these items equipped:
+                        - Any Ardy Cloak.
+                        - Drakan's Medalion
+                        - Ivandis Flail or Enchanted emerald sickle (to cast bloom).
+                        """
+
+        );
+
+
+
+        put("Buy And Crush Chocolate",
+                """
+                        Instructions for Buy And Crush Chocolate:
+                        Start in Lumbridge Castle basement next to the bank with the following items in your bank:
+                        - Pestle and mortar
+                        - Knife
+                        - Coins to purchase chocolate.
+                        
+                        You will need to have completed enough of recipe for disaster to have unlocked chocolate bars from the Culinaromancer's Chest.
+                        """
+
+        );
+        put("Red Salamanders",
+                """
+                        Instructions for Red Salamanders:
+                        Start next to the Red Salamanders by Ourania Altar with around 8 Rope and 8 Small fishing nets.
+                        """
+        );
+        put("Black Salamanders",
+                """
+                        Instructions for Black Salamanders:
+                        Start next to the Black Salamanders in the Wilderness with around 10 Rope and 10 Small fishing nets.
+                        
+                        You may slowly lose fishing nets / rope over time. This is being looked into and will be fixed in a later update. For now it works perfectly fine but may need you to watch over it.
+                        Note that pkers sometimes, but rarely, come to this area. If you die the script will not re-gear yet. Coming in a later update.
+                        """
+
+        );
     }};
 
     @Override
@@ -281,6 +143,8 @@ public class MasterScript extends AbstractScript {
         JPanel panel = new JPanel(new BorderLayout());
 
         JTextArea instructionsArea = new JTextArea();
+        instructionsArea.setLineWrap(true); // This allows the text to wrap to the next line
+        instructionsArea.setWrapStyleWord(true); // This ensures that words aren't broken apart when wrapping
         instructionsArea.setPreferredSize(new Dimension(frame.getWidth(), 35));
         instructionsArea.setBackground(Color.decode("#2f2f2f"));
         instructionsArea.setText(scriptInstructions.getOrDefault(scriptName, "Make sure you have the required items for " + scriptName + ". Once this is done, click start."));
