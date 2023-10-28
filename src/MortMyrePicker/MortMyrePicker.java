@@ -43,7 +43,7 @@ import java.util.concurrent.TimeUnit;
 
 
 
-@ScriptManifest(name = "Mort Myre Picker", description = "Collects Mort Myre Fungus", author = "Zeb",
+@ScriptManifest(name = "Mort Myre Picker", description = "Collects Mort Myre Fungus", author = "Luten",
         version = 1.0, category = Category.HERBLORE, image = "")
 public class MortMyrePicker extends AbstractScript {
 

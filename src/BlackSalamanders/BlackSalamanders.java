@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 
 
-@ScriptManifest(name = "Black Salamanders", description = "Catches Black Salamanders in the Wilderness", author = "Zeb",
+@ScriptManifest(name = "Black Salamanders", description = "Catches Black Salamanders in the Wilderness", author = "Luten",
         version = 1.0, category = Category.HUNTING, image = "")
 public class BlackSalamanders extends AbstractScript {
 

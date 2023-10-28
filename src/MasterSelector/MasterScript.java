@@ -13,7 +13,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
 
-@ScriptManifest(name = "Zeb's Ironman AIO Script", description = "Choose your script...", author = "Zeb",
+@ScriptManifest(name = "Zeb's Ironman AIO Script", description = "Choose your script...", author = "Luten",
         version = 1.0, category = Category.UTILITY, image = "")
 public class MasterScript extends AbstractScript {
 

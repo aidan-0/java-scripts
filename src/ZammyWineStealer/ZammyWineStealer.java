@@ -29,7 +29,7 @@ import org.dreambot.api.wrappers.items.GroundItem;
 
 import java.util.Random;
 
-@ScriptManifest(name = "Zammy Wine Stealer", description = "Steals wine of Zamorak from the deep wilderness.", author = "Zeb",
+@ScriptManifest(name = "Zammy Wine Stealer", description = "Steals wine of Zamorak from the deep wilderness.", author = "Luten",
         version = 1.0, category = Category.HERBLORE, image = "")
 
 

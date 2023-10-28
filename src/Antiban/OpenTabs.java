@@ -128,4 +128,12 @@ public class OpenTabs extends AbstractScript {
             sleep(50, 250);
         }
     }
+
+    @Override
+    public void onExit() {
+        scheduler.shutdownNow();
+        super.onExit();
+    }
+
 }
+

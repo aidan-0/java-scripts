@@ -1,0 +1,5 @@
+package Karambwans;
+
+public enum State {
+    MOVE_TO_BANK_TO_DEPOSIT_ITEMS, OPEN_BANK, BANKING, MOVE_TO_FISHING_AREA, FISHING, GEARING
+}

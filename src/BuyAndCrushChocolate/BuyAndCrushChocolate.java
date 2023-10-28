@@ -25,7 +25,7 @@ import org.dreambot.api.methods.map.Area;
 import java.time.Period;
 import java.util.Random;
 
-@ScriptManifest(name = "Buy And Crush Chocolate", description = "Buys and crushes chocolate from Culinaromancer's Chest.", author = "Zeb",
+@ScriptManifest(name = "Buy And Crush Chocolate", description = "Buys and crushes chocolate from Culinaromancer's Chest.", author = "Luten`",
         version = 1.0, category = Category.HERBLORE, image = "")
 
 

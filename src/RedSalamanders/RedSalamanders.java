@@ -24,7 +24,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 
-@ScriptManifest(name = "Red Salamanders", description = "Catches Red Salamanders by Orania Altar!", author = "Zeb",
+@ScriptManifest(name = "Red Salamanders", description = "Catches Red Salamanders by Orania Altar!", author = "Luten",
         version = 1.0, category = Category.HUNTING, image = "")
 public class RedSalamanders extends AbstractScript {
 
