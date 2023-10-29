@@ -8,6 +8,8 @@ import MortMyrePicker.MortMyrePicker;
 import BuyAndCrushChocolate.BuyAndCrushChocolate;
 import RedSalamanders.RedSalamanders;
 import BlackSalamanders.BlackSalamanders;
+import HosidiusCooker.HosidiusCooker;
+import Karambwans.Karambwans;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,6 +23,10 @@ public class MasterScript extends AbstractScript {
     private JFrame frame;
     private CardLayout cardLayout;
     private JPanel mainPanel;
+    private String selectedFish;
+    private volatile boolean shouldStop = false; // Volatile ensures thread-safety.
+
+
 
     private final HashMap<String, String> scriptInstructions = new HashMap<>() {{
         put("Zammy Wine Stealer",
@@ -48,8 +54,6 @@ public class MasterScript extends AbstractScript {
 
         );
 
-
-
         put("Buy And Crush Chocolate",
                 """
                         Instructions for Buy And Crush Chocolate:
@@ -62,12 +66,14 @@ public class MasterScript extends AbstractScript {
                         """
 
         );
+
         put("Red Salamanders",
                 """
                         Instructions for Red Salamanders:
                         Start next to the Red Salamanders by Ourania Altar with around 8 Rope and 8 Small fishing nets.
                         """
         );
+
         put("Black Salamanders",
                 """
                         Instructions for Black Salamanders:
@@ -76,6 +82,24 @@ public class MasterScript extends AbstractScript {
                         You may slowly lose fishing nets / rope over time. This is being looked into and will be fixed in a later update. For now it works perfectly fine but may need you to watch over it.
                         Note that pkers sometimes, but rarely, come to this area. If you die the script will not re-gear yet. Coming in a later update.
                         """
+
+        );
+
+        put("Hosdius Cooker",
+                """
+                        Instructions for Hosidius Cooker:
+                        Start in the Hosidius kitchen. After you click start, select in the food you wish to cook from the drop-down menu.
+                        """
+                );
+
+        put("Karambwans",
+            """
+                    Instructions for Karambwan Fisher:
+                    Start by a bank. If you have the Fishing barrel then it will use it. 
+                    Currently you need the following: 
+                    - Quest point cape or any Ardy cloak
+                    - Karamja gloves 3 or 4, or Drakan's Medalion
+                    """
 
         );
     }};
@@ -119,7 +143,7 @@ public class MasterScript extends AbstractScript {
         JPanel buttonPanel = new JPanel(new GridLayout(2, 3, 10, 10));
         String[] scripts = {
                 "Zammy Wine Stealer", "Mort Myre Picker", "Buy And Crush Chocolate",
-                "Red Salamanders", "Black Salamanders"
+                "Red Salamanders", "Black Salamanders", "Hosidius Cooker", "Karambwans"
         };
         for (String script : scripts) {
             buttonPanel.add(createButton(script));
@@ -183,10 +207,17 @@ public class MasterScript extends AbstractScript {
                 case "Black Salamanders":
                     chosenScript = new BlackSalamanders();
                     break;
+                case "Hosidius Cooker":
+                    chosenScript = new HosidiusCooker(this, selectedFish);
+                    break;
+                case "Karambwans":
+                    chosenScript = new Karambwans();
+                    break;
                 default:
                     JOptionPane.showMessageDialog(frame, "Script not recognized.");
                     return;
             }
+            chosenScript.onStart();
             frame.dispose();
         });
         return startButton;
@@ -205,16 +236,45 @@ public class MasterScript extends AbstractScript {
     }
 
     private void showConfirmationDialog(String scriptName) {
-        JPanel confirmationPanel = createConfirmationPanel(scriptName);
-        mainPanel.add(confirmationPanel, "CONFIRMATION");
-        cardLayout.show(mainPanel, "CONFIRMATION");
+        if("Hosidius Cooker".equals(scriptName)) {
+            displayFishSelectorGUI();
+        } else {
+            JPanel confirmationPanel = createConfirmationPanel(scriptName);
+            mainPanel.add(confirmationPanel, "CONFIRMATION");
+            cardLayout.show(mainPanel, "CONFIRMATION");
+            frame.revalidate();
+            frame.repaint();
+        }
+    }
 
-        frame.revalidate();
-        frame.repaint();
+    private void displayFishSelectorGUI() {
+        String[] fishTypes = {"Karambwan", "Shark", "Manta ray", "Monk fish", "Sea turtle"}; // Add all the fish types here
+        selectedFish = (String) JOptionPane.showInputDialog(
+                frame,
+                "Select the fish type you wish to cook:",
+                "Fish Selection",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                fishTypes,
+                fishTypes[0]);
+        if (selectedFish != null && !selectedFish.isEmpty()) {
+            chosenScript = new HosidiusCooker(this, selectedFish);
+            chosenScript.onStart();
+            frame.dispose();
+        }
+    }
+
+
+    public void signalStop() {
+        this.shouldStop = true;
     }
 
     @Override
     public int onLoop() {
+        if (shouldStop) {
+            log("Stopping MasterScript...");
+            this.stop();
+        }
         if (chosenScript != null) {
             return chosenScript.onLoop();
         }
@@ -222,10 +282,19 @@ public class MasterScript extends AbstractScript {
     }
 
     @Override
+    public void onPaint(Graphics graphics) {
+        if (chosenScript != null) {
+            chosenScript.onPaint(graphics);
+        }
+    }
+
+
+    @Override
     public void onExit() {
         if (frame != null) {
             frame.dispose();
         }
+        stop();
     }
 
     // Optionally, if you have other lifecycle methods in the AbstractScript, you can override and add them here.
@@ -235,10 +304,3 @@ public class MasterScript extends AbstractScript {
 //        new MasterScript().onStart();
 //    }
 }
-
-
-
-
-//Please remember that the code is now structured in a cleaner and more modular way.
-// If you have any other lifecycle methods in AbstractScript that you might use (like onPaint, onExit, etc.),
-// you can override and implement them in the MasterScript class as required.

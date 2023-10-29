@@ -1,5 +1,6 @@
 package HosidiusCooker;
 
+import MasterSelector.MasterScript;
 import org.dreambot.api.input.Keyboard;
 import org.dreambot.api.input.Mouse;
 import org.dreambot.api.methods.Calculations;
@@ -21,19 +22,26 @@ import org.dreambot.api.utilities.Timer;
 import org.dreambot.api.wrappers.interactive.GameObject;
 
 import java.awt.*;
-
+import java.util.Objects;
 
 
 @ScriptManifest(name = "Hosidius Cooker", description = "Cook at the Hosidius kitchen", author = "Luten",
         version = 1.0, category = Category.COOKING, image = "")
 public class HosidiusCooker extends AbstractScript {
 
+    private final MasterScript masterScript;
     State state;
     Area hosidiusKitchen = new Area(1674, 3622, 1682, 3615);
     Timer timer = new Timer();
     Point clickCookLocation = null;
     private int totalCooked = 0;
     private int previousXP = 0;
+    String fishToCook = null;
+
+    public HosidiusCooker(MasterScript masterScript, String selectedFishType) {
+        this.masterScript = masterScript;
+        this.fishToCook = selectedFishType;
+    }
 
 
     @Override
@@ -43,6 +51,8 @@ public class HosidiusCooker extends AbstractScript {
         SkillTracker.start(Skill.COOKING);
         setZoomAndYaw();
         previousXP = Skills.getExperience(Skill.COOKING);
+        log("Fish to cook: " + fishToCook);
+        log("Fish to cook: " + fishToCook.toLowerCase());
     }
 
 
@@ -53,32 +63,7 @@ public class HosidiusCooker extends AbstractScript {
                 if (!hosidiusKitchen.contains(Players.getLocal().getTile())) {
                     Walking.walk(hosidiusKitchen);
                     log("Moving to hosidius Kitchen");
-                }
-                if (hosidiusKitchen.contains(Players.getLocal().getTile())) {
-                    if (!Bank.isOpen() && Players.getLocal().isStandingStill()) {
-                        Bank.open();
-                        log("Opening Bank");
-                        Sleep.sleepUntil(Bank::isOpen, 10000);
-                    }
-
-                    if (!Inventory.isEmpty()) {
-                        Bank.depositAllItems();
-                        log("Depositing All Items");
-                        Sleep.sleepUntil(Inventory::isEmpty, 2000);
-                    }
-                    sleep(600, 800);
-
-                    if (Inventory.isEmpty()) {
-                        if (Bank.contains("Raw karambwan")) {
-                            Bank.withdrawAll("Raw karambwan");
-                            log("Withdrawing Raw karambwan");
-                            sleep(1600, 2100);
-                        } else {
-                            log("Failed to withdraw Raw karambwan");
-                            stop();
-                        }
-                        Bank.close();
-                    }
+                    sleep(600, 1200);
                 }
             break;
 
@@ -93,13 +78,14 @@ public class HosidiusCooker extends AbstractScript {
                 }
 
                 if (Inventory.isEmpty()) {
-                    if (Bank.contains("Raw karambwan")) {
-                        Bank.withdrawAll("Raw karambwan");
-                        log("Withdrawing Raw karambwan");
+                    if (Bank.contains("Raw " + fishToCook)) {
+                        Bank.withdrawAll("Raw " + fishToCook.toLowerCase());
+                        log("Withdrawing Raw " + fishToCook);
                         sleep(1600, 2100);
                     } else {
-                        log("Failed to withdraw Raw karambwan");
+                        log("Failed to withdraw Raw " + fishToCook.toLowerCase());
                         stop();
+                        masterScript.signalStop();
                     }
                     Bank.close();
                     sleep(600, 1200);
@@ -122,10 +108,10 @@ public class HosidiusCooker extends AbstractScript {
 
             case COOKING:
                 // If not animating and clickCookLocation hasn't been set yet
-                if (!Players.getLocal().isAnimating() && clickCookLocation == null) {
+                if (!Players.getLocal().isAnimating() && clickCookLocation == null && fishToCook.equals("Karambwan")) {
                     GameObject clayOven = GameObjects.closest("Clay oven");
                     clayOven.interact();
-                    sleep(3100, 3800);
+                    sleep(3000, 3800);
                     clickCookLocation = new Point(Calculations.random(272, 365), Calculations.random(393, 456));
                     Mouse.move(clickCookLocation);
                     sleep(10,250);
@@ -134,12 +120,14 @@ public class HosidiusCooker extends AbstractScript {
                     Mouse.move(new Point(800, Calculations.random(0, 502))); //Move mouse off the screen to the right
                 }
                 // If not animating and clickCookLocation has been set
-                else if (!Players.getLocal().isAnimating() && clickCookLocation != null) {
+                else if (!Players.getLocal().isAnimating()) {
                     GameObject clayOven = GameObjects.closest("Clay oven");
                     clayOven.interact();
-                    sleep(3100, 3800);
+                    sleep(3000, 3800);
                     Keyboard.type(" ");
+                    sleep(200, 450);
                     Mouse.move(new Point(800, Calculations.random(0, 502))); //Move mouse off the screen to the right
+                    sleep(200, 450);
                 } else if (!Players.getLocal().isAnimating()) {
                     sleep(1000, 5000);
                 }
@@ -153,7 +141,7 @@ public class HosidiusCooker extends AbstractScript {
     }
 
     private void setZoomAndYaw() {
-        int zoom = Calculations.random(300, 500);
+        int zoom = Calculations.random(275, 450);
         log("Setting zoom level");
         Camera.setZoom(zoom);
 
@@ -178,11 +166,11 @@ public class HosidiusCooker extends AbstractScript {
         log("State is now WITHDRAWING_RAW_ITEMS");
             return State.WITHDRAWING_RAW_ITEMS;
 
-        } else if (!Inventory.contains("Raw karambwan") && hosidiusKitchen.contains(Players.getLocal().getTile())) {
+        } else if (!Inventory.contains("Raw " + fishToCook.toLowerCase()) && hosidiusKitchen.contains(Players.getLocal().getTile())) {
         log("State is now DEPOSITING_COOKED_ITEMS");
             return State.DEPOSITING_COOKED_ITEMS;
 
-        } else if (Inventory.contains("Raw karambwan") && hosidiusKitchen.contains(Players.getLocal().getTile())) {
+        } else if (Inventory.contains("Raw " + fishToCook.toLowerCase()) && hosidiusKitchen.contains(Players.getLocal().getTile())) {
 //        log("State is now COOKING");
             return State.COOKING;
         }
@@ -216,14 +204,3 @@ public class HosidiusCooker extends AbstractScript {
         super.onExit();
     }
 }
-
-
-
-
-
-
-
-
-
-
-
