@@ -1,4 +1,4 @@
-package Antiban;
+package Karambwans;
 
 import org.dreambot.api.input.Mouse;
 import org.dreambot.api.methods.Calculations;
@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 @ScriptManifest(name = "Open Tabs", description = "Randomly click on invent, friends, or skill tab. If on skill tab then hover random skill", author = "Developer Name",
         version = 1.0, category = Category.UTILITY, image = "")
-public class OpenTabs extends AbstractScript {
+public class KarambwanAntiBan extends AbstractScript {
 
     public final Point INVENTORY_WIDGET = new Point(643, 185); // Inventory menu
     public final Point SKILLS_WIDGET = new Point(577, 186); // Stats menu
@@ -34,6 +34,9 @@ public class OpenTabs extends AbstractScript {
 
     @Override
     public int onLoop() {
+
+//        set a random chance for each thing to happen as a method, and then the method takes the parameter of another function
+//        (the thing to happen) and the percentage chance you want it to have
 //        if (random.nextDouble() < 0.05) { // 5% chance of idling for a longer interval
 //            return Calculations.random(5000, 15000); // Idle for 5 to 15 seconds
 //        }
@@ -49,9 +52,9 @@ public class OpenTabs extends AbstractScript {
 
 
     public void onStart() {
-        log("loading tabs anti ban");
+        log("loading anti ban");
         scheduleChooseRandomTab();
-        log("tabs anti-ban is loaded");
+        log("anti-ban is loaded");
 
     }
 
@@ -67,7 +70,7 @@ public class OpenTabs extends AbstractScript {
 
         switch (choice) {
             case 0:
-                openInventory();
+                openSkills();
                 break;
             case 1:
                 openSkills();
@@ -99,7 +102,6 @@ public class OpenTabs extends AbstractScript {
             }
             log("Opening Inventory");
             sleep(50, 250);
-
         }
     }
 
@@ -116,10 +118,11 @@ public class OpenTabs extends AbstractScript {
             log("Opening Skills");
             sleep(302, 750);
         }
-//      Hover random skill
-        Skill randomSkill = SKILLHOVER[random.nextInt(SKILLHOVER.length)];
-        Skills.hoverSkill(randomSkill);
-        sleep(150, 500);
+//      Hover fishing skill
+        Skills.hoverSkill(Skill.FISHING);
+        sleep(600, 2500);
+        openInventory();
+        Mouse.move(new Point(800, Calculations.random(0,502))); //Move mouse off the screen to the right
     }
 
     public void openFriends() {
@@ -134,7 +137,9 @@ public class OpenTabs extends AbstractScript {
                 Mouse.click();
             }
             log("Opening Friends");
-            sleep(50, 250);
+            sleep(600, 1500);
+            openInventory();
+            Mouse.move(new Point(800, Calculations.random(0,502))); //Move mouse off the screen to the right
         }
     }
 
@@ -145,4 +150,3 @@ public class OpenTabs extends AbstractScript {
     }
 
 }
-

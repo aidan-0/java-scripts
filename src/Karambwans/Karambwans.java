@@ -1,6 +1,6 @@
 package Karambwans;
 
-import Antiban.OpenTabs;
+import Karambwans.KarambwanAntiBan;
 import org.dreambot.api.input.Mouse;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.Inventory;
@@ -32,7 +32,7 @@ import java.awt.*;
         version = 1.0, category = Category.FISHING, image = "")
 public class Karambwans extends AbstractScript {
     State state;
-    public OpenTabs openTabsInstance = new OpenTabs(); //imports and uses OpenTabs Anti-ban
+    public KarambwanAntiBan antiBan = new KarambwanAntiBan(); //imports and uses OpenTabs Anti-ban
 
     Area gemMine = new Area(2847, 9382, 2830, 9393, 0);
     Area fishingArea = new Area(2896, 3121, 2903, 3111, 0);
@@ -46,7 +46,7 @@ public class Karambwans extends AbstractScript {
     @Override
     public void onStart() {
         log("Script Started");
-        openTabsInstance.onStart();
+        antiBan.onStart();
         SkillTracker.start();
         SkillTracker.start(Skill.FISHING);
     }
@@ -223,7 +223,6 @@ public class Karambwans extends AbstractScript {
                     sleep(3000, 5000);
                     break;
                 }
-
                 break;
 
             case FISHING:
@@ -234,7 +233,7 @@ public class Karambwans extends AbstractScript {
                     }
                     NPCs.closest(4712).interact("Fish");
                     sleep(1000, 2000);
-                    openTabsInstance.openInventory();
+                    antiBan.openInventory();
                     sleep(200,800);
                     Mouse.move(new Point(800, Calculations.random(0,502))); //Move mouse off the screen to the right
                 }
@@ -272,6 +271,8 @@ public class Karambwans extends AbstractScript {
         log("returning state");
         return state;
     }
+
+
 
     @Override
     public void onPaint(Graphics g) {
