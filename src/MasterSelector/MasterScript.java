@@ -211,7 +211,7 @@ public class MasterScript extends AbstractScript {
                     chosenScript = new HosidiusCooker(this, selectedFish);
                     break;
                 case "Karambwans":
-                    chosenScript = new Karambwans();
+                    chosenScript = new Karambwans(this);
                     break;
                 default:
                     JOptionPane.showMessageDialog(frame, "Script not recognized.");
