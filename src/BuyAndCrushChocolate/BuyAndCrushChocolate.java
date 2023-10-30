@@ -1,6 +1,6 @@
 package BuyAndCrushChocolate;
 
-
+import Antiban.AntiBan;
 import org.dreambot.api.input.Mouse;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.Inventory;
@@ -19,9 +19,6 @@ import org.dreambot.api.script.Category;
 import org.dreambot.api.script.ScriptManifest;
 import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.wrappers.interactive.GameObject;
-import org.dreambot.api.methods.map.Area;
-
-import java.util.Random;
 
 @ScriptManifest(name = "Buy And Crush Chocolate", description = "Buys and crushes chocolate from Culinaromancer's Chest.", author = "Luten`",
         version = 1.0, category = Category.HERBLORE, image = "")
@@ -29,26 +26,23 @@ import java.util.Random;
 
 public class BuyAndCrushChocolate extends AbstractScript {
 
-//    public OpenTabs openTabsInstance = new OpenTabs(); //imports and uses OpenTabs Anti-ban
-    private static final Random random = new Random();
-    Area mageBank = new Area(2531, 4711, 2545, 4721, 0);
+    public AntiBan antiBan = new AntiBan(); //imports and Anti-ban
     int chocolateCount = 0;
 
     @Override
     public void onStart() {
         log("Script Started");
         setZoomLevel();
-//        openTabsInstance.onStart();
     }
 
     @Override
     public int onLoop() {
-//        if (chocolateCount < 1000) {
-//            log("Starting purchase cycle");
-//            withdrawCoins();
-//            openFoodChest();
-//            purchaseChocolate();
-//        } else {
+        if (chocolateCount < 1000) {
+            log("Starting purchase cycle");
+            withdrawCoins();
+            openFoodChest();
+            purchaseChocolate();
+        } else {
             log("Starting crush cycle");
             depositCoins();
             inventorySetup();
@@ -58,7 +52,7 @@ public class BuyAndCrushChocolate extends AbstractScript {
             if(!Bank.contains("Chocolate bar")) {
             chocolateCount = 0;
             }
-//        }
+        }
 
         log("looped");
         return 500;
@@ -70,19 +64,6 @@ public class BuyAndCrushChocolate extends AbstractScript {
         Camera.setZoom(zoom);
     }
 
-    private void setPitch() {
-        int pitch = Calculations.random(274, 347);
-        log("Setting pitch");
-        Camera.rotateToPitch(pitch);
-        sleep(50, 350);
-    }
-
-    private void setYaw() {
-        int yaw = Calculations.random(940, 1104);
-        log("Setting yaw");
-        Camera.rotateToYaw(yaw);
-        sleep(50, 350);
-    }
 
     private void withdrawCoins() {
         if(!Inventory.contains("Coins")) {
@@ -277,10 +258,6 @@ public class BuyAndCrushChocolate extends AbstractScript {
 
     }
 
-    public static int randomBetween(int min, int max) {
-        Random rand = new Random();
-        return rand.nextInt((max - min) + 1) + min;
-    }
 
     @Override
     public void onExit() {

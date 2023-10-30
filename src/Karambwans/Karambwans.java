@@ -28,10 +28,7 @@ import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.utilities.Timer;
 import org.dreambot.api.wrappers.interactive.GameObject;
 
-
 import java.awt.*;
-import java.util.Random;
-
 
 @ScriptManifest(name = "Karambwan Fisher", description = "Fish and bank Karambwans", author = "Luten",
         version = 1.0, category = Category.FISHING, image = "")
@@ -265,9 +262,8 @@ public class Karambwans extends AbstractScript {
                     Mouse.move(new Point(800, Calculations.random(0,502))); //Move mouse off the screen to the right
                 }
 //                sleep(1000,15000);
-                sleep(antiBan.randomDelayMedium());
-                antiBan.chooseRandomTab(Skill.FISHING);
-
+                sleep(antiBan.randomDelayMedium(100));
+                antiBan.chooseRandomTab(Skill.FISHING, 50);
                 break;
         }
         return 1;

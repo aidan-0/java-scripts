@@ -15,7 +15,7 @@ import java.util.Random;
 
 
 @ScriptManifest(name = "Open Tabs", description = "Anti-ban", author = "Luten",
-        version = 1.0, category = Category.UTILITY, image = "")
+        version = 1.0, category = Category.UTILITY)
 public class AntiBan extends AbstractScript {
 
     public final Point INVENTORY_WIDGET = new Point(643, 185); // Inventory menu
@@ -37,63 +37,97 @@ public class AntiBan extends AbstractScript {
 
     public void onStart() {
         log("loading anti ban");
-        // call chooseRandomTab or delayTime
+        //Everything that can be called
+//        sleep(antiBan.randomDelayMedium(100)); medium, short, or long, with % of it executing
+//        antiBan.chooseRandomTab(Skill.FISHING, 50); //skill to hover and % of it executing
+//        hoverRandomSkill
+//        openInventory()
+//        openSkills();
     }
 
 
-    public void chooseRandomTab(Skill skill) {
-        //enter the skill you're training / to check
-        // 1% chance to execute an anti-ban action
-        if (random.nextDouble() <= 0.01) {
-            int action = random.nextInt(3); // Generates a random number between 0 (inclusive) and 3 (exclusive)
 
-            switch(action) {
-                case 0:
-                    openSkills(Skill.FISHING);
-                    break;
-                case 1:
-                    openFriends();
-                    break;
-                case 2:
-                    openInventory();
-                    break;
-            }
+
+    public void chooseRandomTab(Skill skill, double chance) {
+        // Check if the method should execute based on the provided chance
+        if (!shouldExecute(chance)) {
+            log("Failed chance check for chooseRandomTab");
+            return;
+        }
+
+        log("Choosing random tab");
+        int action = random.nextInt(3); // Generates a random number between 0 (inclusive) and 3 (exclusive)
+
+        switch(action) {
+            case 0:
+                openSkills(skill);  // Use the provided skill
+                break;
+            case 1:
+                openFriends();
+                break;
+            case 2:
+                openInventory();
+                break;
         }
     }
 
-    int delayTimeShort = randomDelayShort();
-    int delayTimeMedium = randomDelayMedium();
-    int delayTimeLong = randomDelayLong();
-
-
-    public int randomDelayShort() {
-        double meanDelay = 12000;
-        double variance = 10000;
-        int delay = (int) (meanDelay + random.nextGaussian() * variance);
-        delay = Math.max(1000, delay); // Ensure we have a minimum of 1 second delay
-        delay = Math.min(100000, delay); // Ensure we have a maximum of 50 seconds delay
-        log("Delaying for " + delay + " seconds.");
-        return delay;
+    private boolean shouldExecute(double chance) {
+        return random.nextDouble() < (chance / 100.0);
     }
 
-    public int randomDelayMedium() {
-        double meanDelay = 12000;
-        double variance = 10000;
-        int delay = (int) (meanDelay + random.nextGaussian() * variance);
-        delay = Math.max(1000, delay); // Ensure we have a minimum of 1 second delay
-        delay = Math.min(100000, delay); // Ensure we have a maximum of 50 seconds delay
-        log("Delaying for " + delay + " seconds.");
-        return delay;
+//    Call them like this
+//    int delayTimeShort = randomDelayShort(10); 10%
+//    int delayTimeMedium = randomDelayMedium(10) 10%
+//    sleep(antiBan.randomDelayMedium(100)); 100%
+//    int delayTimeLong = randomDelayLong(10); 10%
+
+
+    public int randomDelayShort(double chance) {
+        if (shouldExecute(chance)) {
+            log("Executing short delay");
+            double meanDelay = 12000;
+            double variance = 10000;
+            int delay = (int) (meanDelay + random.nextGaussian() * variance);
+            delay = Math.max(1000, delay); // Ensure we have a minimum of 1-second delay
+            delay = Math.min(100000, delay); // Ensure we have a maximum of 50 seconds delay
+            log("Delaying for " + delay + " seconds.");
+            return delay;
+        } else {
+            log("Skipped short delay");
+            return 0; // or any default value for "skipped"
+        }
     }
 
-    public int randomDelayLong() {
-        double meanDelay = 200000;
-        double variance = 100000;
-        int delay = (int) (meanDelay + random.nextGaussian() * variance);
-        delay = Math.max(100000, delay); // Ensure we have a minimum of 1.66 minute delay
-        delay = Math.min(900000, delay); // Ensure we have a maximum of 15 minute delay
-        log("Delaying for " + delay + " seconds.");
-        return delay;
+    public int randomDelayMedium(double chance) {
+        if (shouldExecute(chance)) {
+            log("executing medium delay");
+            double meanDelay = 12000;
+            double variance = 10000;
+            int delay = (int) (meanDelay + random.nextGaussian() * variance);
+            delay = Math.max(1000, delay); // Ensure we have a minimum of 1-second delay
+            delay = Math.min(100000, delay); // Ensure we have a maximum of 50 seconds delay
+            log("Delaying for " + delay + " seconds.");
+            return delay;
+        } else {
+            log("Skipped Medium delay");
+            return 0; // or any default value for "skipped"
+        }
+    }
+
+    public int randomDelayLong(double chance) {
+        if (shouldExecute(chance)) {
+            log("Executing long delay");
+            double meanDelay = 200000;
+            double variance = 100000;
+            int delay = (int) (meanDelay + random.nextGaussian() * variance);
+            delay = Math.max(100000, delay); // Ensure we have a minimum of 1.66-minute delay
+            delay = Math.min(900000, delay); // Ensure we have a maximum of 15-minute delay
+            log("Delaying for " + delay + " seconds.");
+            return delay;
+        } else {
+            log("Skipped Long delay");
+            return 0; // or any default value for "skipped"
+        }
     }
 
     public static int randomBetween(int min, int max) {
@@ -129,7 +163,7 @@ public class AntiBan extends AbstractScript {
             log("Opening Skills");
             sleep(302, 750);
         }
-//      Hover fishing skill
+//      Hover specific skill
         Skills.hoverSkill(skill);
         sleep(600, 2500);
         openInventory();
@@ -152,6 +186,26 @@ public class AntiBan extends AbstractScript {
             openInventory();
             Mouse.move(new Point(800, Calculations.random(0,502))); //Move mouse off the screen to the right
         }
+    }
+
+    public void hoverRandomSkill() {
+        if (!Tabs.isOpen(Tab.SKILLS)) {
+            if (Calculations.random(1, 3) == 2)
+                Tabs.openWithFKey(Tab.SKILLS);
+            else {
+                int x = (int) SKILLS_WIDGET.getX() + randomBetween(0, 11);
+                int y = (int) SKILLS_WIDGET.getY() + randomBetween(0, 11);
+                Mouse.move(new Point(x, y));
+                Mouse.click();
+            }
+            log("Opening Skills");
+            sleep(302, 750);
+        }
+        Skill randomSkill = SKILLHOVER[random.nextInt(SKILLHOVER.length)];  // This line randomly selects a skill
+        Skills.hoverSkill(randomSkill);
+        sleep(600, 2500);
+        openInventory();
+        Mouse.move(new Point(800, Calculations.random(0,502))); //Move mouse off the screen to the right
     }
 
     @Override

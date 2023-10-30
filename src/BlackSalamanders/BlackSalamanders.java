@@ -25,7 +25,6 @@ import java.awt.*;
 import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 
 
@@ -36,7 +35,6 @@ public class BlackSalamanders extends AbstractScript {
     public AntiBan antiBanInstance = new AntiBan(); //imports and uses OpenTabs Anti-ban
     Area blackSalamanderArea = new Area(3292, 3678, 3300, 3664, 0); //Sets Black Salamander Area
     public final Point INVENTORY_WIDGET = new Point(643, 185); // Inventory menu
-    private static final Random random = new Random();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
 

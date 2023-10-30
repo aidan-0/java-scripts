@@ -1,5 +1,6 @@
 package HosidiusCooker;
 
+import Antiban.AntiBan;
 import MasterSelector.MasterScript;
 import org.dreambot.api.input.Keyboard;
 import org.dreambot.api.input.Mouse;
@@ -17,12 +18,11 @@ import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.script.Category;
 import org.dreambot.api.script.ScriptManifest;
-import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.utilities.Timer;
 import org.dreambot.api.wrappers.interactive.GameObject;
 
 import java.awt.*;
-import java.util.Objects;
+
 
 
 @ScriptManifest(name = "Hosidius Cooker", description = "Cook at the Hosidius kitchen", author = "Luten",
@@ -36,7 +36,8 @@ public class HosidiusCooker extends AbstractScript {
     Point clickCookLocation = null;
     private int totalCooked = 0;
     private int previousXP = 0;
-    String fishToCook = null;
+    String fishToCook;
+    AntiBan antiBan = new AntiBan();
 
     public HosidiusCooker(MasterScript masterScript, String selectedFishType) {
         this.masterScript = masterScript;
@@ -94,6 +95,8 @@ public class HosidiusCooker extends AbstractScript {
 
 
             case DEPOSITING_COOKED_ITEMS:
+                sleep(antiBan.randomDelayMedium(20));
+                sleep(antiBan.randomDelayLong(1));
                 if (!Bank.isOpen() || Players.getLocal().isStandingStill()) {
                     GameObject bankChest = GameObjects.closest("Bank Chest");
                     bankChest.interact("Use");
@@ -134,9 +137,7 @@ public class HosidiusCooker extends AbstractScript {
                 sleep(400,600);
                 checkXPGains();
             break;
-
         }
-
         return 1;
     }
 
