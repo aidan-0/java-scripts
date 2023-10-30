@@ -1,5 +1,6 @@
 package MasterSelector;
 
+import org.dreambot.api.methods.tabs.Tabs;
 import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.script.Category;
 import org.dreambot.api.script.ScriptManifest;
@@ -95,7 +96,7 @@ public class MasterScript extends AbstractScript {
         put("Karambwans",
             """
                     Instructions for Karambwan Fisher:
-                    Start by a bank. If you have the Fishing barrel then it will use it. 
+                    Start by a bank. If you have the Fishing barrel then it will use it.
                     Currently you need the following: 
                     - Quest point cape or any Ardy cloak
                     - Karamja gloves 3 or 4, or Drakan's Medalion
@@ -291,16 +292,10 @@ public class MasterScript extends AbstractScript {
 
     @Override
     public void onExit() {
+        Tabs.logout();
         if (frame != null) {
             frame.dispose();
         }
         stop();
     }
-
-    // Optionally, if you have other lifecycle methods in the AbstractScript, you can override and add them here.
-
-//    public static void main(String[] args) {
-//        // This main method can be used for testing purposes if required.
-//        new MasterScript().onStart();
-//    }
 }

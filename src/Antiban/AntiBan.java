@@ -12,14 +12,11 @@ import org.dreambot.api.script.ScriptManifest;
 
 import java.awt.*;
 import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 
-@ScriptManifest(name = "Open Tabs", description = "Randomly click on invent, friends, or skill tab. If on skill tab then hover random skill", author = "Developer Name",
+@ScriptManifest(name = "Open Tabs", description = "Anti-ban", author = "Luten",
         version = 1.0, category = Category.UTILITY, image = "")
-public class OpenTabs extends AbstractScript {
+public class AntiBan extends AbstractScript {
 
     public final Point INVENTORY_WIDGET = new Point(643, 185); // Inventory menu
     public final Point SKILLS_WIDGET = new Point(577, 186); // Stats menu
@@ -30,57 +27,74 @@ public class OpenTabs extends AbstractScript {
             Skill.RUNECRAFTING, Skill.SLAYER, Skill.FARMING, Skill.CONSTRUCTION, Skill.HUNTER
     };
     private static final Random random = new Random();
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     @Override
     public int onLoop() {
-//        if (random.nextDouble() < 0.05) { // 5% chance of idling for a longer interval
-//            return Calculations.random(5000, 15000); // Idle for 5 to 15 seconds
-//        }
-//
-//        // Gaussian delay to mimic human-like unpredictable interaction times
-//        double meanDelay = 10000; // average 10 seconds
-//        double variance = 5000;
-//        int delay = (int) (meanDelay + random.nextGaussian() * variance);
-//        return Math.max(1000, delay); // Ensure we have a minimum of 1 second delay
         return 2500;
     }
 
 
 
     public void onStart() {
-        log("loading tabs anti ban");
-        scheduleChooseRandomTab();
-        log("tabs anti-ban is loaded");
-
+        log("loading anti ban");
+        // call chooseRandomTab or delayTime
     }
 
-    private void scheduleChooseRandomTab() {
-        // Random delay between 5 and 15 minutes (converted to milliseconds)
-        long delay = (5 + random.nextInt(11)) * 60 * 1000;
 
-        scheduler.schedule(this::chooseRandomTab, delay, TimeUnit.MILLISECONDS);
-    }
+    public void chooseRandomTab(Skill skill) {
+        //enter the skill you're training / to check
+        // 1% chance to execute an anti-ban action
+        if (random.nextDouble() <= 0.01) {
+            int action = random.nextInt(3); // Generates a random number between 0 (inclusive) and 3 (exclusive)
 
-    private void chooseRandomTab() {
-        int choice = random.nextInt(3);
-
-        switch (choice) {
-            case 0:
-                openInventory();
-                break;
-            case 1:
-                openSkills();
-                break;
-            case 2:
-                openFriends();
-                break;
+            switch(action) {
+                case 0:
+                    openSkills(Skill.FISHING);
+                    break;
+                case 1:
+                    openFriends();
+                    break;
+                case 2:
+                    openInventory();
+                    break;
+            }
         }
-        scheduleChooseRandomTab();
     }
 
+    int delayTimeShort = randomDelayShort();
+    int delayTimeMedium = randomDelayMedium();
+    int delayTimeLong = randomDelayLong();
 
 
+    public int randomDelayShort() {
+        double meanDelay = 12000;
+        double variance = 10000;
+        int delay = (int) (meanDelay + random.nextGaussian() * variance);
+        delay = Math.max(1000, delay); // Ensure we have a minimum of 1 second delay
+        delay = Math.min(100000, delay); // Ensure we have a maximum of 50 seconds delay
+        log("Delaying for " + delay + " seconds.");
+        return delay;
+    }
+
+    public int randomDelayMedium() {
+        double meanDelay = 12000;
+        double variance = 10000;
+        int delay = (int) (meanDelay + random.nextGaussian() * variance);
+        delay = Math.max(1000, delay); // Ensure we have a minimum of 1 second delay
+        delay = Math.min(100000, delay); // Ensure we have a maximum of 50 seconds delay
+        log("Delaying for " + delay + " seconds.");
+        return delay;
+    }
+
+    public int randomDelayLong() {
+        double meanDelay = 200000;
+        double variance = 100000;
+        int delay = (int) (meanDelay + random.nextGaussian() * variance);
+        delay = Math.max(100000, delay); // Ensure we have a minimum of 1.66 minute delay
+        delay = Math.min(900000, delay); // Ensure we have a maximum of 15 minute delay
+        log("Delaying for " + delay + " seconds.");
+        return delay;
+    }
 
     public static int randomBetween(int min, int max) {
         Random rand = new Random();
@@ -99,11 +113,10 @@ public class OpenTabs extends AbstractScript {
             }
             log("Opening Inventory");
             sleep(50, 250);
-
         }
     }
 
-    public void openSkills() {
+    public void openSkills(Skill skill) {
         if (!Tabs.isOpen(Tab.SKILLS)) {
             if (Calculations.random(1, 3) == 2)
                 Tabs.openWithFKey(Tab.SKILLS);
@@ -116,10 +129,11 @@ public class OpenTabs extends AbstractScript {
             log("Opening Skills");
             sleep(302, 750);
         }
-//      Hover random skill
-        Skill randomSkill = SKILLHOVER[random.nextInt(SKILLHOVER.length)];
-        Skills.hoverSkill(randomSkill);
-        sleep(150, 500);
+//      Hover fishing skill
+        Skills.hoverSkill(skill);
+        sleep(600, 2500);
+        openInventory();
+        Mouse.move(new Point(800, Calculations.random(0,502))); //Move mouse off the screen to the right
     }
 
     public void openFriends() {
@@ -134,15 +148,15 @@ public class OpenTabs extends AbstractScript {
                 Mouse.click();
             }
             log("Opening Friends");
-            sleep(50, 250);
+            sleep(600, 1500);
+            openInventory();
+            Mouse.move(new Point(800, Calculations.random(0,502))); //Move mouse off the screen to the right
         }
     }
 
     @Override
     public void onExit() {
-        scheduler.shutdownNow();
         super.onExit();
     }
 
 }
-

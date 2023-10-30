@@ -1,6 +1,6 @@
 package RedSalamanders;
 
-import Antiban.OpenTabs;
+import Antiban.AntiBan;
 import org.dreambot.api.input.Mouse;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.Inventory;
@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
         version = 1.0, category = Category.HUNTING, image = "")
 public class RedSalamanders extends AbstractScript {
 
-    public OpenTabs openTabsInstance = new OpenTabs(); //imports and uses OpenTabs Anti-ban
+    public AntiBan antiBanInstance = new AntiBan(); //imports and uses OpenTabs Anti-ban
     Area redSalamanderArea = new Area(2446, 3230, 2455, 3219, 0); //Sets Red Salamander Area
     public final Point INVENTORY_WIDGET = new Point(643, 185); // Inventory menu
     private static final Random random = new Random();
@@ -38,7 +38,7 @@ public class RedSalamanders extends AbstractScript {
     @Override
     public void onStart() {
         log("Script Started");
-        openTabsInstance.onStart();
+        antiBanInstance.onStart();
         Tabs.openWithFKey(Tab.INVENTORY);
         scheduleRest();
     }

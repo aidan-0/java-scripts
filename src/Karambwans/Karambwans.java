@@ -1,6 +1,6 @@
 package Karambwans;
 
-import Karambwans.KarambwanAntiBan;
+import Antiban.AntiBan;
 import MasterSelector.MasterScript;
 import org.dreambot.api.input.Mouse;
 import org.dreambot.api.methods.Calculations;
@@ -18,6 +18,7 @@ import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.methods.skills.Skill;
 import org.dreambot.api.methods.skills.SkillTracker;
+import org.dreambot.api.methods.tabs.Tabs;
 import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.methods.widget.Widgets;
 import org.dreambot.api.script.AbstractScript;
@@ -27,13 +28,16 @@ import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.utilities.Timer;
 import org.dreambot.api.wrappers.interactive.GameObject;
 
+
 import java.awt.*;
+import java.util.Random;
+
 
 @ScriptManifest(name = "Karambwan Fisher", description = "Fish and bank Karambwans", author = "Luten",
         version = 1.0, category = Category.FISHING, image = "")
 public class Karambwans extends AbstractScript {
     State state;
-    public KarambwanAntiBan antiBan = new KarambwanAntiBan(); //imports and uses OpenTabs Anti-ban
+    public AntiBan antiBan = new AntiBan();
 
     Area gemMine = new Area(2847, 9382, 2830, 9393, 0);
     Area fishingArea = new Area(2896, 3121, 2903, 3111, 0);
@@ -43,15 +47,14 @@ public class Karambwans extends AbstractScript {
     Timer timer = new Timer();
     private final MasterScript masterScript;
 
+
     public Karambwans(MasterScript masterScript) {
         this.masterScript = masterScript;
     }
 
-
     @Override
     public void onStart() {
         log("Script Started");
-        antiBan.onStart();
         SkillTracker.start();
         SkillTracker.start(Skill.FISHING);
     }
@@ -100,11 +103,14 @@ public class Karambwans extends AbstractScript {
                                 hasWithdrawnKaramjaGloves = true;
                                 successfulWithdrawKaramjaGloves = i;
                                 break;
-                            } else {
-                                log("Failed to withdraw Karamja gloves");
-                                stop();
-                                masterScript.stop();
                             }
+                        } else {
+                            log("Failed to withdraw Karamja gloves");
+                            Bank.close();
+                            sleep(2000,2500);
+                            Tabs.logout();
+                            masterScript.stop();
+                            sleep(20000,25000);
                         }
                     }
 
@@ -114,7 +120,11 @@ public class Karambwans extends AbstractScript {
                         sleepUntil(() -> Inventory.contains("Quest point cape"), 25000, 50);
                     } else {
                         log("Failed to withdraw Quest point cape");
+                        Bank.close();
+                        sleep(2000,2500);
+                        Tabs.logout();
                         masterScript.signalStop();
+                        sleep(20000,25000);
                     }
 
                     if (Bank.contains("Dramen staff")) {
@@ -123,7 +133,11 @@ public class Karambwans extends AbstractScript {
                         sleepUntil(() -> Inventory.contains("Dramen staff"), 25000, 50);
                     } else {
                         log("Failed to withdraw Dramen staff");
+                        Bank.close();
+                        sleep(2000,2500);
+                        Tabs.logout();
                         masterScript.signalStop();
+                        sleep(20000,25000);
                     }
 
                     //Equipping items
@@ -152,8 +166,11 @@ public class Karambwans extends AbstractScript {
                         sleepUntil(() -> Inventory.contains("Raw karambwanji"), 25000, 50);
                     } else {
                         log("Failed to withdraw Raw karambwanji");
-                        stop();
+                        Bank.close();
+                        sleep(2000,2500);
+                        Tabs.logout();
                         masterScript.signalStop();
+                        sleep(20000,25000);
                     }
 
                     if (Bank.contains("Karambwan vessel")) {
@@ -162,8 +179,11 @@ public class Karambwans extends AbstractScript {
                         sleepUntil(() -> Inventory.contains("Karambwan vessel"), 25000, 50);
                     } else {
                         log("Failed to withdraw Karambwan vessel");
-                        stop();
+                        Bank.close();
+                        sleep(2000,2500);
+                        Tabs.logout();
                         masterScript.signalStop();
+                        sleep(20000,25000);
                     }
 
                     if (Bank.contains("Open fish barrel")) {
@@ -178,6 +198,7 @@ public class Karambwans extends AbstractScript {
                 break;
 
             case MOVE_TO_BANK_TO_DEPOSIT_ITEMS:
+                //one in 13 chance of afking for 2-6 minutes each time this is called
                 Equipment.interact(EquipmentSlot.HANDS, "Gem Mine");
                 sleep(4000, 5000);
                 break;
@@ -243,7 +264,10 @@ public class Karambwans extends AbstractScript {
                     sleep(200,800);
                     Mouse.move(new Point(800, Calculations.random(0,502))); //Move mouse off the screen to the right
                 }
-                sleep(1000,15000);
+//                sleep(1000,15000);
+                sleep(antiBan.randomDelayMedium());
+                antiBan.chooseRandomTab(Skill.FISHING);
+
                 break;
         }
         return 1;
@@ -277,7 +301,6 @@ public class Karambwans extends AbstractScript {
         log("returning state");
         return state;
     }
-
 
 
     @Override

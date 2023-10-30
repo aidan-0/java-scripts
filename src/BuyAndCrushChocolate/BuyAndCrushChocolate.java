@@ -1,7 +1,6 @@
 package BuyAndCrushChocolate;
 
 
-import Antiban.OpenTabs;
 import org.dreambot.api.input.Mouse;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.Inventory;
@@ -22,7 +21,6 @@ import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.wrappers.interactive.GameObject;
 import org.dreambot.api.methods.map.Area;
 
-import java.time.Period;
 import java.util.Random;
 
 @ScriptManifest(name = "Buy And Crush Chocolate", description = "Buys and crushes chocolate from Culinaromancer's Chest.", author = "Luten`",

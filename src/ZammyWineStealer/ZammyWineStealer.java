@@ -1,6 +1,6 @@
 package ZammyWineStealer;
 
-import Antiban.OpenTabs;
+import Antiban.AntiBan;
 
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.Inventory;
@@ -35,7 +35,7 @@ import java.util.Random;
 
 public class ZammyWineStealer extends AbstractScript {
 
-    public OpenTabs openTabsInstance = new OpenTabs(); //imports and uses OpenTabs Anti-ban
+    public AntiBan antiBanInstance = new AntiBan(); //imports and uses OpenTabs Anti-ban
     private static final Random random = new Random();
     Area mageBank = new Area(2531, 4711, 2545, 4721, 0);
 
@@ -45,7 +45,7 @@ public class ZammyWineStealer extends AbstractScript {
         setZoomLevel();
         enableRun();
 //        turn auto attack off if its on
-        openTabsInstance.onStart();
+        antiBanInstance.onStart();
     }
 
     @Override
@@ -454,20 +454,6 @@ public class ZammyWineStealer extends AbstractScript {
         }
     }
 
-    int x = -1;
-    int y = -1;
-
-//    private void settingMouse() {
-//        sleep(1000, 1200);
-//        Tile wineTile = new Tile(3018, 10353);
-//        if (x == -1 && y == -1) {
-//            Mouse.move(wineTile);
-//            x = Mouse.getX();
-//            y = Mouse.getY();
-//        }
-//
-//    }
-
     private void stealingWines() {
         GroundItem wine = GroundItems.closest(groundItem -> groundItem != null && groundItem.getID() == 23489);
 
@@ -590,10 +576,7 @@ public class ZammyWineStealer extends AbstractScript {
         }
     }
 
-    public static int randomBetween(int min, int max) {
-        Random rand = new Random();
-        return rand.nextInt((max - min) + 1) + min;
-    }
+
 
     public void enableRun() {
         if (!Walking.isRunEnabled()) {

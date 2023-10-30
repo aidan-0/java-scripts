@@ -1,10 +1,8 @@
 package MortMyrePicker;
 
-import Antiban.OpenTabs;
+import Antiban.AntiBan;
 import org.dreambot.api.Client;
-import org.dreambot.api.ClientSettings;
 import org.dreambot.api.data.GameState;
-import org.dreambot.api.input.Mouse;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.container.impl.bank.Bank;
@@ -13,41 +11,30 @@ import org.dreambot.api.methods.container.impl.equipment.EquipmentSlot;
 import org.dreambot.api.methods.input.Camera;
 import org.dreambot.api.methods.interactive.GameObjects;
 import org.dreambot.api.methods.interactive.Players;
-import org.dreambot.api.methods.item.GroundItems;
 import org.dreambot.api.methods.map.Tile;
-import org.dreambot.api.methods.prayer.Prayer;
 import org.dreambot.api.methods.skills.Skill;
-import org.dreambot.api.methods.skills.SkillTracker;
-import org.dreambot.api.methods.skills.Skills;
-import org.dreambot.api.methods.tabs.Tab;
-import org.dreambot.api.methods.tabs.Tabs;
 import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.methods.world.World;
 import org.dreambot.api.methods.world.Worlds;
 import org.dreambot.api.methods.worldhopper.WorldHopper;
-import org.dreambot.api.randoms.BankPinSolver;
 import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.script.Category;
 import org.dreambot.api.script.ScriptManifest;
 import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.wrappers.interactive.GameObject;
-import org.dreambot.api.wrappers.interactive.Player;
-import org.dreambot.api.wrappers.items.GroundItem;
 import org.dreambot.api.methods.map.Area;
 
 import java.awt.*;
 import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 
 
 @ScriptManifest(name = "Mort Myre Picker", description = "Collects Mort Myre Fungus", author = "Luten",
         version = 1.0, category = Category.HERBLORE, image = "")
 public class MortMyrePicker extends AbstractScript {
 
-    public OpenTabs openTabsInstance = new OpenTabs(); //imports and uses OpenTabs Anti-ban
+    public AntiBan antiBanInstance = new AntiBan(); //imports and uses OpenTabs Anti-ban
     public final Point INVENTORY_WIDGET = new Point(643, 185); // Inventory menu
     private static final Random random = new Random();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -58,7 +45,7 @@ public class MortMyrePicker extends AbstractScript {
     public void onStart() {
         log("Script Started");
         setZoomLevel();
-        openTabsInstance.onStart();
+        antiBanInstance.onStart();
     }
 
     @Override
@@ -207,7 +194,7 @@ public class MortMyrePicker extends AbstractScript {
         int prayerLevel = Skill.PRAYER.getBoostedLevel();
         if (prayerLevel <= 3 || Inventory.isFull()) {
             log("Inventory Full or Prayer level is too low");
-            openTabsInstance.openInventory();
+            antiBanInstance.openInventory();
             return;
         }
 
