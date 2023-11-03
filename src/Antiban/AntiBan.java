@@ -85,11 +85,11 @@ public class AntiBan extends AbstractScript {
     public int randomDelayShort(double chance) {
         if (shouldExecute(chance)) {
             log("Executing short delay");
-            double meanDelay = 12000;
-            double variance = 10000;
+            double meanDelay = 2000;
+            double variance = 1250;
             int delay = (int) (meanDelay + random.nextGaussian() * variance);
-            delay = Math.max(1000, delay); // Ensure we have a minimum of 1-second delay
-            delay = Math.min(100000, delay); // Ensure we have a maximum of 50 seconds delay
+            delay = Math.max(400, delay); // Ensure we have a minimum of 1-second delay
+            delay = Math.min(6500, delay); // Ensure we have a maximum of 50 seconds delay
             log("Delaying for " + delay + " seconds.");
             return delay;
         } else {
@@ -206,6 +206,31 @@ public class AntiBan extends AbstractScript {
         sleep(600, 2500);
         openInventory();
         Mouse.move(new Point(800, Calculations.random(0,502))); //Move mouse off the screen to the right
+    }
+
+    public void mouseOffScreenForFewSeconds(double chance) {
+        if (shouldExecute(chance)) {
+            Mouse.move(new Point(770, Calculations.random(0,502))); //Move mouse off the screen to the right
+            sleep(4200,7500);
+            Mouse.move(new Point(750,  Calculations.random(0,502)));
+        } else {
+            log("Skipped mouseOffScreenForFewSeconds");
+        }
+    }
+
+    public void verySmallMouseAdjustment(double chance) {
+        if (shouldExecute(chance)) {
+            log("very small mouse adjustment");
+            Point mousePoint = Mouse.getPosition();
+            int x = mousePoint.x;
+            int y = mousePoint.y;
+
+            int deltaX = random.nextInt(7) - 3;
+            int deltaY = random.nextInt(7) - 3;
+            Mouse.move(new Point(x + deltaX, y + deltaY));
+        } else {
+            log("Skipped verySmallMouseAdjustment");
+        }
     }
 
     @Override
