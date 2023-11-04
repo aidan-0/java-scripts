@@ -6,6 +6,9 @@ import org.dreambot.api.methods.skills.Skill;
 import org.dreambot.api.methods.skills.Skills;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
+import org.dreambot.api.methods.world.World;
+import org.dreambot.api.methods.world.Worlds;
+import org.dreambot.api.methods.worldhopper.WorldHopper;
 import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.script.Category;
 import org.dreambot.api.script.ScriptManifest;
@@ -86,11 +89,11 @@ public class AntiBan extends AbstractScript {
         if (shouldExecute(chance)) {
             log("Executing short delay");
             double meanDelay = 2000;
-            double variance = 1250;
+            double variance = 500;
             int delay = (int) (meanDelay + random.nextGaussian() * variance);
             delay = Math.max(400, delay); // Ensure we have a minimum of 1-second delay
             delay = Math.min(6500, delay); // Ensure we have a maximum of 50 seconds delay
-            log("Delaying for " + delay + " seconds.");
+            log("Delaying for " + (delay/1000) + " seconds.");
             return delay;
         } else {
             log("Skipped short delay");
@@ -106,7 +109,7 @@ public class AntiBan extends AbstractScript {
             int delay = (int) (meanDelay + random.nextGaussian() * variance);
             delay = Math.max(1000, delay); // Ensure we have a minimum of 1-second delay
             delay = Math.min(100000, delay); // Ensure we have a maximum of 50 seconds delay
-            log("Delaying for " + delay + " seconds.");
+            log("Delaying for " + (delay/1000) + " seconds.");
             return delay;
         } else {
             log("Skipped Medium delay");
@@ -122,7 +125,7 @@ public class AntiBan extends AbstractScript {
             int delay = (int) (meanDelay + random.nextGaussian() * variance);
             delay = Math.max(100000, delay); // Ensure we have a minimum of 1.66-minute delay
             delay = Math.min(900000, delay); // Ensure we have a maximum of 15-minute delay
-            log("Delaying for " + delay + " seconds.");
+            log("Delaying for " + (delay/1000) + " seconds.");
             return delay;
         } else {
             log("Skipped Long delay");
@@ -210,11 +213,12 @@ public class AntiBan extends AbstractScript {
 
     public void mouseOffScreenForFewSeconds(double chance) {
         if (shouldExecute(chance)) {
-            Mouse.move(new Point(770, Calculations.random(0,502))); //Move mouse off the screen to the right
+            Mouse.move(new Point(800, Calculations.random(0,502))); //Move mouse off the screen to the right
             sleep(4200,7500);
-            Mouse.move(new Point(750,  Calculations.random(0,502)));
+            Mouse.move(new Point(770,  Calculations.random(0,502)));
+            log("moving mouse off screen for a few seconds");
         } else {
-            log("Skipped mouseOffScreenForFewSeconds");
+//            log("Skipped mouseOffScreenForFewSeconds");
         }
     }
 
@@ -229,13 +233,19 @@ public class AntiBan extends AbstractScript {
             int deltaY = random.nextInt(7) - 3;
             Mouse.move(new Point(x + deltaX, y + deltaY));
         } else {
-            log("Skipped verySmallMouseAdjustment");
+//            log("Skipped verySmallMouseAdjustment");
         }
+    }
+
+    public void hopWorlds() {
+        World world = Worlds.getRandomWorld(w -> w.isMembers() && w.isNormal() && !w.isHighRisk() && !w.isDeadmanMode() && Skills.getTotalLevel() >= w.getMinimumLevel() && !w.isPVP() && w.getPopulation() < 1500);
+        WorldHopper.hopWorld(world.getWorld());
+        log("Hopping to world " + world.getWorld());
+        sleep(5000, 6000);
     }
 
     @Override
     public void onExit() {
         super.onExit();
     }
-
 }

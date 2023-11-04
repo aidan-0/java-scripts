@@ -6,6 +6,7 @@ import org.dreambot.api.input.Keyboard;
 import org.dreambot.api.input.Mouse;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.Inventory;
+import org.dreambot.api.methods.container.impl.Shop;
 import org.dreambot.api.methods.container.impl.bank.Bank;
 import org.dreambot.api.methods.input.Camera;
 import org.dreambot.api.methods.interactive.GameObjects;
@@ -22,6 +23,7 @@ import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.script.Category;
 import org.dreambot.api.script.ScriptManifest;
+import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.utilities.Timer;
 import org.dreambot.api.wrappers.interactive.GameObject;
 
@@ -39,7 +41,12 @@ public class CastSpinFlax extends AbstractScript {
     private int flaxSpun = 0;
     private int previousXP = 0;
 //    String fishToCook;
+    Area nearBabaYagaHouse = new Area(2094, 3928, 2084, 3932, 0);
+    Area inBabaYagaHouse = new Area(2449, 4645, 2453, 4649, 0);
+    Area bankArea = new Area(2095, 3916, 2101, 3919,0);
+    int numOfAstralRunesToPurchase = 3000; //change this later to become whatever the user inputs on startup
     AntiBan antiBan = new AntiBan();
+
 
 //    public CastSpinFlax(MasterScript masterScript, String selectedFishType) {
 //        this.masterScript = masterScript;
@@ -62,53 +69,71 @@ public class CastSpinFlax extends AbstractScript {
     public int onLoop() {
         switch (getState()) {
             case WITHDRAW_ITEMS:
-                sleep(antiBan.randomDelayMedium(18));
-                sleep(antiBan.randomDelayLong(1));
-                if (!Bank.isOpen() && NPCs.closest(6126) != null) {
-                    NPCs.closest(6126).interact("Bank");
-                    sleep(2600, 3400);
-                }
+                if(!bankArea.contains(Players.getLocal().getTile())) {
+                    Walking.walk(bankArea);
+                    log("Moving to bank area");
+                    sleepUntil(() -> bankArea.contains(Players.getLocal().getTile()), 5000, 50);
+                    sleep(600, 1200);
+                } else {
+                    sleep(antiBan.randomDelayMedium(18));
+                    sleep(antiBan.randomDelayLong(1));
+                    if (!Bank.isOpen() && NPCs.closest(6126) != null) {
+                        NPCs.closest(6126).interact("Bank");
+                        Sleep.sleepUntil(Bank::isOpen, 15000);
+                        sleep(2600, 3400);
+                    }
 
-                if(!Inventory.onlyContains("Astral rune", "Nature rune", "Bow string", "Flax")) {
-                    log("Inventory contained unwanted item(s). Banking all and re-gearing");
-                    Bank.depositAllItems();
-                }
+                    if (!Inventory.onlyContains("Astral rune", "Nature rune", "Bow string", "Flax")) {
+                        log("Inventory contained unwanted item(s). Banking all and re-gearing");
+                        Bank.depositAllItems();
+                        Sleep.sleepUntil(Inventory::isEmpty, 2000);
+                    }
 
-                if(Inventory.contains("Bow string")) {
-                    Bank.depositAll("Bow string");
-                    sleep(1600, 2100);
-                }
+                    if (Inventory.contains("Bow string")) {
+                        Bank.depositAll("Bow string");
+                        Sleep.sleepUntil(Inventory::isEmpty, 2000);
+                        sleep(1600, 2100);
+                    }
 
-                if (!Inventory.contains("Astral rune") && Bank.contains("Astral rune")) {
-                    Bank.withdrawAll("Astral rune");
-                    log("Withdrawing Astral runes");
-                    sleep(1600, 2100);
-                } else if (!Inventory.contains("Astral rune") && !Bank.contains("Astral rune")) {
-                    log("Failed to withdraw Astral runes");
-                    stop();
-//                    masterScript.signalStop();
-                }
+                    if (!Inventory.contains("Astral rune") && Bank.contains("Astral rune")) {
+                        Bank.withdrawAll("Astral rune");
+                        log("Withdrawing Astral runes");
+                        sleepUntil(() -> Inventory.contains("Astral rune"), 10000, 50);
+                        sleep(1600, 2100);
+                    } else if (!Inventory.contains("Astral rune") && !Bank.contains("Astral rune")) {
+                        log("Failed to withdraw Astral runes");
+                        if (numOfAstralRunesToPurchase > 1) {
+                            break;
+                        } else {
+                            stop();
+                            //                    masterScript.signalStop();
+                        }
+                    }
 
-                if(!Inventory.contains("Nature rune") && Bank.contains("Nature rune")) {
-                    Bank.withdrawAll("Nature rune");
-                    log("Withdrawing Nature runes");
-                    sleep(1600, 2100);
-                } else if (!Inventory.contains("Nature rune") && !Bank.contains("Nature rune")) {
-                    log("Failed to withdraw Nature runes");
-                    stop();
-//                    masterScript.signalStop();
-                }
+                    if (!Inventory.contains("Nature rune") && Bank.contains("Nature rune")) {
+                        Bank.withdrawAll("Nature rune");
+                        log("Withdrawing Nature runes");
+                        sleepUntil(() -> Inventory.contains("Nature rune"), 10000, 50);
 
-                if (!Inventory.contains("Flax") && Bank.contains("Flax")) {
-                    Bank.withdraw("Flax", 25);
-                    log("Withdrawing 25 Flax");
-                    sleep(1600, 2100);
-                } else if (!Inventory.contains("Flax") && Bank.contains("Flax")) {
-                    log("Failed to withdraw flax");
-                    stop();
-//                    masterScript.signalStop();
+                        sleep(1600, 2100);
+                    } else if (!Inventory.contains("Nature rune") && !Bank.contains("Nature rune")) {
+                        log("Failed to withdraw Nature runes");
+                        stop();
+                        //                    masterScript.signalStop();
+                    }
+
+                    if (!Inventory.contains("Flax") && Bank.contains("Flax")) {
+                        Bank.withdraw("Flax", 25);
+                        log("Withdrawing 25 Flax");
+                        sleepUntil(() -> Inventory.contains("Flax"), 10000, 50);
+                        sleep(300,600);
+                    } else if (!Inventory.contains("Flax") && Bank.contains("Flax")) {
+                        log("Failed to withdraw flax");
+                        stop();
+                        //                    masterScript.signalStop();
+                    }
+                    Bank.close();
                 }
-                Bank.close();
                 sleep(600, 1200);
                 break;
 
@@ -119,11 +144,68 @@ public class CastSpinFlax extends AbstractScript {
                 log("casting Spin Flax");
                 antiBan.mouseOffScreenForFewSeconds(4);
                 antiBan.randomDelayShort(6);
-                sleep(1400, 2300);
+                sleep(1400, 1800);
                 checkXPGains();
                 break;
 
+
+            case PREP_TO_RESTOCK_ASTRALS:
+                sleep(antiBan.randomDelayMedium(18));
+                sleep(antiBan.randomDelayLong(1));
+                if (!Inventory.contains("Coins") && !Bank.isOpen() && NPCs.closest(6126) != null) {
+                    NPCs.closest(6126).interact("Bank");
+                    Sleep.sleepUntil(Bank::isOpen, 15000);
+                    sleep(2600, 3400);
+                }
+
+                if(Bank.isOpen() && Bank.contains("Coins")) {
+                    Bank.depositAllItems();
+                    Sleep.sleepUntil(Inventory::isEmpty, 5000);
+                    Bank.withdrawAll("Coins");
+                    log("withdrawing coins");
+                    sleepUntil(() -> Inventory.contains("Coins"), 10000, 50);
+                }
+
+                if (Inventory.contains("Coins") && !nearBabaYagaHouse.contains(Players.getLocal().getTile()) || !inBabaYagaHouse.contains(Players.getLocal().getTile())) {
+                    Walking.walk(nearBabaYagaHouse);
+                    log("Moving near Baba Yaga's House");
+                    sleepUntil(() -> nearBabaYagaHouse.contains(Players.getLocal().getTile()), 10000, 50);
+                    sleep(600, 1200);
+                }
+
+                if (NPCs.closest(3836) != null) { //the house
+                    NPCs.closest(3836).interact("Go-inside");
+                    sleepUntil(() -> inBabaYagaHouse.contains(Players.getLocal().getTile()), 10000, 50);
+                }
+
+                sleep(600, 1200);
+                break;
+
+
             case RESTOCK_ASTRALS:
+                if (!Shop.isOpen() && NPCs.closest(3837) != null) {
+                    NPCs.closest(3837).interact("Trade");
+                    sleep(2000, 3500);
+                }
+
+                if (Shop.isOpen() && Shop.count("Astral rune") > 10) {
+                    Shop.purchaseFifty("Astral rune");
+                    log("Total astrals in inventory is " + Inventory.count("Astral rune"));
+                    log("need to purchase " + (numOfAstralRunesToPurchase - Inventory.count("Astral rune")) + " more Astral runes.");
+                    sleep(800, 1400);
+                } else if (Shop.isOpen() && Shop.count("Astral rune") <= 10) {
+                    antiBan.hopWorlds();
+                }
+                sleep(1600, 2200);
+                break;
+
+
+
+            case RETURN_TO_BANK:
+                GameObject door = GameObjects.closest("Door");
+                door.interact("Open");
+                sleep(2500,4000);
+
                 break;
         }
         return 1;
@@ -149,14 +231,23 @@ public class CastSpinFlax extends AbstractScript {
 
 
     private State getState() {
-        if (!Inventory.contains("Astral rune") && !Bank.contains("Astral rune")) {
+        if (!Inventory.contains("Astral rune") && !Bank.contains("Astral rune") && !inBabaYagaHouse.contains(Players.getLocal().getTile())) {
+            log("State is now PREP_TO_RESTOCK_ASTRALS");
+            return State.PREP_TO_RESTOCK_ASTRALS;
+//            If restock astrals checkbox is ticked (true) then when astrals run out it will purchase the amount of astrals input by the user from babas shop, before continuing the script
+            //this will only work if you have started on lunar isle
+
+        } else if (inBabaYagaHouse.contains(Players.getLocal().getTile()) && Inventory.count("Astral rune") < numOfAstralRunesToPurchase) {
             log("State is now RESTOCK_ASTRALS");
             return State.RESTOCK_ASTRALS;
 //            If restock astrals checkbox is ticked (true) then when astrals run out it will purchase the amount of astrals input by the user from babas shop, before continuing the script
             //this will only work if you have started on lunar isle
-        }
 
-        if (!Inventory.contains("Astral rune") || !Inventory.contains("Nature rune") || !Inventory.contains("Flax")) {
+        } else if (inBabaYagaHouse.contains(Players.getLocal().getTile()) && Inventory.count("Astral rune") >= numOfAstralRunesToPurchase) {
+            log("State is now RETURN_TO_BANK");
+            return State.RETURN_TO_BANK;
+
+        } else if (!Inventory.contains("Astral rune") || !Inventory.contains("Nature rune") || !Inventory.contains("Flax")) {
             log("State is now WITHDRAW_ITEMS");
             return State.WITHDRAW_ITEMS;
 
