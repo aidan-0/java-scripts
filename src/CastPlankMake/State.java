@@ -1,0 +1,5 @@
+package CastPlankMake;
+
+public enum State {
+    WITHDRAW_ITEMS, CAST_PLANK_MAKE, PREP_TO_RESTOCK_ASTRALS, RESTOCK_ASTRALS, RETURN_TO_BANK
+}
