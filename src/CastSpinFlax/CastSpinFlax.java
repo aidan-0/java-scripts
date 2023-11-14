@@ -192,7 +192,7 @@ public class CastSpinFlax extends AbstractScript {
                     Shop.purchaseFifty("Astral rune");
                     log("Total astrals in inventory is " + Inventory.count("Astral rune"));
                     log("need to purchase " + (numOfAstralRunesToPurchase - Inventory.count("Astral rune")) + " more Astral runes.");
-                    sleep(800, 1400);
+                    sleep(250, 1000);
                 } else if (Shop.isOpen() && Shop.count("Astral rune") <= 10) {
                     antiBan.hopWorlds();
                 }
@@ -205,6 +205,27 @@ public class CastSpinFlax extends AbstractScript {
                 GameObject door = GameObjects.closest("Door");
                 door.interact("Open");
                 sleep(2500,4000);
+
+                if(!bankArea.contains(Players.getLocal().getTile())) {
+                    Walking.walk(bankArea);
+                    log("Moving to bank area");
+                    sleepUntil(() -> bankArea.contains(Players.getLocal().getTile()), 5000, 50);
+                    sleep(600, 1200);
+                } else {
+                    sleep(antiBan.randomDelayMedium(18));
+                    sleep(antiBan.randomDelayLong(1));
+                    if (!Bank.isOpen() && NPCs.closest(6126) != null) {
+                        NPCs.closest(6126).interact("Bank");
+                        Sleep.sleepUntil(Bank::isOpen, 15000);
+                        sleep(600, 1400);
+                    }
+
+                    if (Inventory.contains("Teak plank")) {
+                        Bank.depositAll("Teak plank");
+                        Sleep.sleepUntil(Inventory::isEmpty, 2000);
+                        sleep(200, 600);
+                    }
+                }
 
                 break;
         }
@@ -231,7 +252,7 @@ public class CastSpinFlax extends AbstractScript {
 
 
     private State getState() {
-        if (!Inventory.contains("Astral rune") && !Bank.contains("Astral rune") && !inBabaYagaHouse.contains(Players.getLocal().getTile())) {
+        if (Inventory.count("Astral rune") < 10 && !Bank.contains("Astral rune") && !inBabaYagaHouse.contains(Players.getLocal().getTile())) {
             log("State is now PREP_TO_RESTOCK_ASTRALS");
             return State.PREP_TO_RESTOCK_ASTRALS;
 //            If restock astrals checkbox is ticked (true) then when astrals run out it will purchase the amount of astrals input by the user from babas shop, before continuing the script
@@ -251,7 +272,7 @@ public class CastSpinFlax extends AbstractScript {
             log("State is now WITHDRAW_ITEMS");
             return State.WITHDRAW_ITEMS;
 
-        } else if (Inventory.contains("Astral rune") && Inventory.contains("Nature rune") && Inventory.count("Flax") > 4)  {
+        } else if (Inventory.contains("Astral rune") && Inventory.contains("Nature rune") && Inventory.count("Flax") > 4 && bankArea.contains(Players.getLocal().getTile()))  {
             //and air staff equipped
             log("State is now CAST_SPIN_FLAX");
             return State.CAST_SPIN_FLAX;
