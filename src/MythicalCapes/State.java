@@ -1,0 +1,5 @@
+package MythicalCapes;
+
+public enum State {
+    BANKING, MOVE_TO_HOUSE, MAKE_MYTH_CAPES, REMOVE_MYTH_CAPES, EXIT_HOUSE, UNNOTE_PLANKS, RETURN_TO_HOUSE
+}
