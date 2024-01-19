@@ -1,0 +1,6 @@
+package CastSuperglassMake;
+
+public enum State {
+    WITHDRAW_ITEMS, CAST_SUPERGLASS_MAKE, PREP_TO_RESTOCK_ASTRALS, RESTOCK_ASTRALS, RETURN_TO_BANK
+
+}
